@@ -1,11 +1,13 @@
 import { Box,ScrollView,Modal,Center, Pressable,Text,Image, VStack, Button, Divider, Heading, Flex, HStack, Icon, Spacer } from 'native-base'
-import React,{useState,useEffect} from 'react'
+import React,{useState,useCallback} from 'react'
 import Header from './Header'
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Footer from '../Components/Footer'
 import { StyleSheet } from 'react-native';
 import itemdetails from '../Itemdetails'
+import { useFocusEffect } from '@react-navigation/native';
+import {MaterialCommunityIcons} from '@expo/vector-icons'
 const Tab = createMaterialTopTabNavigator();
 
 function Scanitem() {
@@ -18,71 +20,84 @@ const [item1,setItem1]=useState('Item_392');
 const [item2,setItem2]=useState('Item_c1');
 const [item3,setItem3]=useState('Assigned to Supp_1 on 04/05/23');
 
- 
-  const onscanbutton=()=>{
- 
 
 
-   
-      const getBarCodeScannerPermissions = async () => {
+useFocusEffect(
+  useCallback(
+    ()=>{
+     ( async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         setHasPermission(status === 'granted');
-        setOpenqr(true)
-      };  
+      
+      } )(); 
+    }
+  )
+)
 
-
-    getBarCodeScannerPermissions();
+const onscanbutton=()=>{
+ 
 
    
-    if (hasPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
-    }
-    if (hasPermission === false) {
-      return <Text>No access to camera</Text>;
-    }
-    }
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+  }
 
-
-    const handleBarCodeScanned = ({ type, data }) => {
-      setOpenqr(false);
-      setScanned(true);
-      setInfo(data);
-      console.log(data)
-      const arr=data.split(",");
+function Modalcamfun(){
   
-    
-      // const obj=JSON.parse(data);
-      // console.log(obj.item1);
-      // console.log(obj.item2);
-      // console.log(obj.item3);
-      setItem1(arr[0])
-       setItem2(arr[1])
-     setItem3(arr[2])
-    };
+  const handleBarCodeScanned = ({data }) => {
+    setOpenqr(false);
+    setScanned(true);
+    setInfo(data);
+    console.log(data)
+    const arr=data.split(",");
+
+  
+    // const obj=JSON.parse(data);
+    // console.log(obj.item1);
+    // console.log(obj.item2);
+    // console.log(obj.item3);
+    setItem1(arr[0])
+     setItem2(arr[1])
+   setItem3(arr[2])
+  };
+
+
+  return(
+    <Box bg="white" justifyContent="center" alignItems="center" h={300} w={300}>
+        
+    <BarCodeScanner
+      onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+      style={{width:260,height:260}}       
+    />
+     {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
+    Tap to Scan Again
+    </Button>
+    }
+      </Box>
+
+  )
+} 
+  
+
+
 
   return (
     <Box flex={1} justifyContent="space-between" bg="#E7F0FB">
       <Modal isOpen={openqr} onClose={()=>setOpenqr(false)} >
-        <Box bg="white" justifyContent="center" alignItems="center" h={300} w={300}>
-        
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={{width:260,height:260}}       
-      />
-       {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
-      Tap to Scan Again
-      </Button>
-      }
-   
-     
-        </Box>
-   
+      <Modalcamfun/>
       </Modal>
     <ScrollView  showsVerticalScrollIndicator={false}>
     <Box justifyContent="space-evenly"  w="full" h={350} >
           <Center>
-          {/* <Box w={150} h={150} bg='#0005'></Box> */}
-          <Image alt="qr code" w={150} h={150} resizeMode='contain' source={require('../assets/qrcode.png')}  />
+          <Box w={150} h={150} justifyContent="center" alignItems="center" bg='white'>
+            <MaterialCommunityIcons name="qrcode-scan" size={110} color="black"/></Box> 
+       
+          {/* <Image alt="qr code" w={150} h={150} resizeMode='contain' source={require('../assets/qrcode.png')}  />
+        */}
           </Center>
          
         
@@ -90,7 +105,7 @@ const [item3,setItem3]=useState('Assigned to Supp_1 on 04/05/23');
         <Button 
         _
          fontSize={16}
-          onPress={onscanbutton} rounded={5} bg="#3C5AC8" w="40%" h={12} 
+          onPress={()=>setOpenqr(true)} rounded={5} bg="#3C5AC8" w="40%" h={12} 
                    _pressed={{
                   
             bg:"#0004",
@@ -157,8 +172,10 @@ function Scanlocation() {
     <ScrollView  showsVerticalScrollIndicator={false} nestedScrollEnabled >
     <Box justifyContent="space-evenly"  w="full" h={350} >
           <Center>
-          {/* <Box w={150} h={150} bg='#0005'></Box> */}
-          <Image alt="qr code" w={150} h={150} resizeMode='contain' source={require('../assets/qrcode.png')}  />
+          <Box w={150} h={150} justifyContent="center" alignItems="center" bg='white'>
+            <MaterialCommunityIcons name="qrcode-scan" size={110} color="black"/></Box>
+          {/* <Image alt="qr code" w={150} h={150} resizeMode='contain' source={require('../assets/qrcode.png')}  />
+     */}
           </Center>
          
         

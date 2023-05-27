@@ -97,6 +97,7 @@ const printfnnavigate=()=>{
           SAVE
         </Text>
 </Button>
+
        <Pressable onPress={printfnnavigate} >
 
         <Text py={1} textDecorationLine="underline" fontWeight={500} fontSize={16} >
