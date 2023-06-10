@@ -1,37 +1,109 @@
 
-import { Box, HStack,Divider,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
-import React from 'react'
+import { Box,Modal, HStack,Divider,ScrollView,Pressable, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
+import React,{useState,useCallback} from 'react'
 import Header from '../Header'
+import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useFocusEffect } from '@react-navigation/native';
 import Footer from '../../Components/Footer'
 import itemdetails from '../../Itemdetails'
+import { MaterialIcons } from '@expo/vector-icons';
 const RecVender = ({navigation}) => {
+  const [openqr,setOpenqr]=useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+
+  useFocusEffect(
+    useCallback(
+      ()=>{
+       ( async () => {
+          const { status } = await BarCodeScanner.requestPermissionsAsync();
+          setHasPermission(status === 'granted');
+        
+        } )(); 
+      }
+    )
+  )
+  const onscanbutton=()=>{
+    if (hasPermission === null) {
+      return <Text>Requesting for camera permission</Text>;
+    }
+    if (hasPermission === false) {
+      return <Text>No access to camera</Text>;
+    }
+    }
+  function Modalcamfun(){
+    onscanbutton();
+    const handleBarCodeScanned = ({data }) => {
+      setOpenqr(false);
+     alert(data);
+    // const obj=JSON.parse(data);
+      // console.log(obj.item1);
+      // console.log(obj.item2);
+      // console.log(obj.item3); 
+    };
+    return(
+      <Box bg="white" justifyContent="center" alignItems="center" h={300} w={300}>       
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={{width:260,height:260}}       
+      />
+       {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)}>
+      Tap to Scan Again
+      </Button>
+      }
+        </Box>
+    )
+  } 
   return (
     <Box flex={1}  justifyContent="space-between" bg="#E7F0FB">
-    <Header goback={()=>navigation.goBack()} title="Operation"/>
+       <Modal isOpen={openqr} onClose={()=>setOpenqr(false)} >
+        <Modalcamfun/>
+        </Modal>
+    <Header goback={()=>navigation.goBack()} title="Received From Vendor"/>
    <ScrollView   nestedScrollEnabled>
-
-  
     <Box flex={1} >   
-    <VStack mx={5} my={5}  space={5}>
-<Heading fontWeight={600} fontSize={20} >
+    <VStack mx={5} my={10}  space={5}>
+{/* <Heading fontWeight={600} fontSize={20} >
   Recieving
-</Heading>
-<Text fontSize={18}  w="full" rounded={5} pl={5} bg="white" py={4}  >
+</Heading> */}
+<HStack justifyContent="space-between" w="full" rounded={5} px={5} bg="white" py={4}>
+<Text fontSize={18}>
   Scan Item QR
 </Text>
-<Text fontSize={18} w="full" rounded={5} pl={5} bg="white" py={4} >
+<Pressable
+
+_pressed={
+  {
+    bg:'grey'
+  }
+}
+onPress={()=>setOpenqr(true)}>
+<MaterialIcons  name="qr-code-scanner" size={24} color="black" />  
+</Pressable>
+</HStack>
+
+<HStack justifyContent="space-between" w="full" rounded={5} px={5} bg="white" py={4}>
+<Text fontSize={18}>
 Scan Store Location
 </Text>
+<Pressable
+_pressed={
+  {
+    bg:'grey'
+  }
+}
+onPress={()=>alert("scan is not possible")}
+>
+
+<MaterialIcons  name="qr-code-scanner" size={24} color="black" />  
+</Pressable>
+</HStack>
+
 </VStack>
 <VStack mx={5} my={5}  space={5}>
-
-
 <Heading fontWeight={600} fontSize={20} >
   Item Details
 </Heading>
-
-
-
 <VStack bg="white" shadow={1} py={3} px={2}  space={3} divider={<Divider />} w="100%">
   <HStack justifyContent="space-between">
     <Text fontWeight={600} >Sr. No</Text>
@@ -53,16 +125,12 @@ Scan Store Location
         <Text>{item.itemcode} </Text>
         <Text>{item.itemloc} </Text>
         <Text>+</Text>
-     
       </HStack>
     ))
   }
-  </ScrollView>
-      
- 
+
+  </ScrollView> 
 </VStack>
-
-
 </VStack>
 <Center>
         <Divider  w="90%" orientation='horizontal' />

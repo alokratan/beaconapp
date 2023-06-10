@@ -1,0 +1,49 @@
+
+
+
+import React, { useEffect, useRef } from 'react';
+import { View,Button } from 'react-native';
+import * as Print from 'expo-print';
+import QRCode from 'react-native-qrcode-svg';
+
+const PrintQRCode = () => {
+  const qrCodeRef = useRef(null); 
+  const html = `
+  <img
+    src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
+    style="width: 90vw;" />
+`;
+const print = async () => {
+  // On iOS/android prints the given html. On web prints the HTML from the current page.
+  await Print.printAsync({
+    html
+  });
+};
+
+  // useEffect(() => {
+  //   printQRCode();
+  // }, []);
+
+  // const printQRCode = async () => {
+  //   const svg = qrCodeRef.current.toDataURL();
+
+  //   const printOptions = {
+  //     html: `<img src="${svg}" />`,
+  //   };
+
+  //   await Print.printAsync(printOptions);
+  // };
+
+  return (
+    <View>
+        <Button title="Print" onPress={print} />
+      <QRCode
+        ref={qrCodeRef}
+        value="https://example.com"
+        size={200}
+      />
+    </View>
+  );
+};
+
+export default PrintQRCode;

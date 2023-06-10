@@ -1,25 +1,39 @@
 
-import { Box, HStack,Divider,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
+import { Box, HStack,Pressable,Divider,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
 import React from 'react'
 import Header from '../Header'
 import itemdetails from '../../Itemdetails'
 import Footer from '../../Components/Footer'
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Qualpass = ({navigation}) => {
   return (
     <Box flex={1}  justifyContent="space-between" bg="#E7F0FB">
-    <Header goback={()=>navigation.goBack()} title="Operation"/>
+    <Header goback={()=>navigation.goBack()} title="Quality Pass"/>
    <ScrollView   nestedScrollEnabled>
 
   
     <Box flex={1} >   
-    <VStack mx={5} my={5}  space={5}>
-<Heading fontWeight={600} fontSize={20} >
+    <VStack mx={5} my={10}  space={5}>
+{/* <Heading fontWeight={600} fontSize={20} >
 Quality Pass
-</Heading>
-<Text fontSize={18}  w="full" rounded={5} pl={5} bg="white" py={4}  >
-  Scan Item
+</Heading> */}
+
+<HStack justifyContent="space-between" w="full" rounded={5} px={5} bg="white" py={4}>
+<Text fontSize={18}>
+Scan Item
 </Text>
+<Pressable
+
+_pressed={
+  {
+    bg:'grey'
+  }
+}
+onPress={()=>alert("scan is not possible")}>
+<MaterialIcons  name="qr-code-scanner" size={24} color="black" />  
+</Pressable>
+</HStack>
 
 </VStack>
 <VStack mx={5} my={5}  space={5}>

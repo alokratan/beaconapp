@@ -1,24 +1,38 @@
 
-import { Box, HStack,Divider,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
+import { Box, HStack,Divider,Pressable,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
 import React from 'react'
 import Header from '../Header'
 import Footer from '../../Components/Footer'
 import itemdetails from '../../Itemdetails'
+import { MaterialIcons } from '@expo/vector-icons';
 const RetVender = ({navigation}) => {
   return (
     <Box flex={1}  justifyContent="space-between" bg="#E7F0FB">
-    <Header goback={()=>navigation.goBack()} title="Operation"/>
+    <Header goback={()=>navigation.goBack()} title="Return To Vender"/>
    <ScrollView   nestedScrollEnabled>
 
   
     <Box flex={1} >   
-    <VStack mx={5} my={5}  space={5}>
-<Heading fontWeight={600} fontSize={20} >
+    <VStack mx={5} my={10}  space={5}>
+{/* <Heading fontWeight={600} fontSize={20} >
 Return to Vendor
-</Heading>
-<Text fontSize={18}  w="full" rounded={5} pl={5} bg="white" py={4}  >
-  Scan QR Code
+</Heading> */}
+<HStack justifyContent="space-between" w="full" rounded={5} px={5} bg="white" py={4}>
+<Text fontSize={18}>
+Scan QR Code
 </Text>
+<Pressable
+
+_pressed={
+  {
+    bg:'grey'
+  }
+}
+onPress={()=>alert("scan is not possible")}>
+<MaterialIcons  name="qr-code-scanner" size={24} color="black" />  
+</Pressable>
+</HStack>
+
 
 </VStack>
 <VStack mx={5} my={5}  space={5}>

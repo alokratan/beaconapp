@@ -1,9 +1,9 @@
 import { Box,Text,Image,VStack,Select,HStack,Pressable,Modal, FormControl, CheckIcon, Center, Button, Spacer } from 'native-base'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import QRCode from 'react-native-qrcode-svg'
-
 import Footer from '../Components/Footer';
 import Header from './Header';
+import axios from 'axios';
 const Gencode = ({navigation}) => {
   const [category,setCategory]=useState("");
   const [item,setItem]=useState("");
@@ -11,38 +11,77 @@ const Gencode = ({navigation}) => {
   const [location,setLocation]=useState("");
   const [numqr,setNumqr]=useState("");
   const [sizeqr,setSizeqr]=useState("");
+  const [itemcode,setItemcode]=useState("");
   const [qrdata,setQrdata]=useState("");
   const [generated,setGenerated]=useState(false);
 
+  useEffect(() => {
+   
+  }, [])
+
+  
+function generateRandomSixDigitNumber() {
+  const unique= Math.floor(100000 + Math.random() * 900000);
+  setItemcode(unique)
+  console.log(unique)
+}
+  
+  const postdata=async()=>{
+
+    try {
+      const result=await axios.post('https://ourphonemd.com/ords/consultit/QRCODE/QRCODEDATA',
+      // {
+      //   category,item,supplier,location,numqr,sizeqr,qrdata,generated
+        
+      // }
+      {
+        "P_QR_CATEGORY":"hello",
+        "P_ITEM":"4",
+        "P_SUPPLIER":"3",
+        "P_QR_LOCATION":"ghaziaad",
+        "P_QR_QUANTITY":"3",
+        "P_QR_SIZE":"24"
+      }
+      
+      )
+      console.log(result.data); // Handle the response data
+    } catch (error) {
+      console.error(error); // Handle the error
+    }
+   
+  }
 
    const obj={
     Category:category,
     Item:item,
+    Item_Code:itemcode,
     Supplier:supplier,
     Location:location,
     No_QR_Code:numqr,
     QR_Size:sizeqr
    };
-
    const av=JSON.stringify(obj);
    
- 
-
-
- 
-
-
   const ongenfn=()=>{
+   
     setGenerated(true);
     setQrdata(av);
+    console.log(qrdata)
+    
   }
   const categoryfn=(e)=>{
     console.log("hello",e)
+  
+   
    
 setCategory(e)
   }
+
   const itemfn=(e)=>{
+    generateRandomSixDigitNumber();
     console.log("hello",e)
+    console.log(itemcode)
+    
    
 setItem(e)
   }
@@ -87,7 +126,7 @@ const printfnnavigate=()=>{
         _
          fontSize={16}
          
-          onPress={()=>setGenerated(false)} rounded={5} bg="#3C5AC8" w="40%" h={12} 
+          onPress={postdata} rounded={5} bg="#3C5AC8" w="40%" h={12} 
                    _pressed={{
                   
             bg:"#0004",
@@ -98,7 +137,7 @@ const printfnnavigate=()=>{
         </Text>
 </Button>
 
-       <Pressable onPress={printfnnavigate} >
+       <Pressable onPress={()=>alert('Print is not possible in Your Device')} >
 
         <Text py={1} textDecorationLine="underline" fontWeight={500} fontSize={16} >
           Print
@@ -116,8 +155,6 @@ const printfnnavigate=()=>{
 <Spacer/>
         <VStack m={5}>
           {/* <FormControl> */}
-
-          
 
             <Select mb={5}  bg="white" fontSize={18} borderWidth={0} rounded={5} py={3} 
             placeholderTextColor={"black"} accessibilityLabel="Category"  placeholder="Category"
@@ -258,25 +295,19 @@ placeholderTextColor={"black"} placeholder="QR Code Size"
           }} >
 Generate QR Code
 </Button>
+<Pressable py={3}  onPress={printfnnavigate} >
+
+<Text textDecorationLine="underline" fontWeight={500} fontSize={16} >
+  View
+</Text>
+</Pressable>
           </Center>
           <Spacer/>
        
          
 
 
-  {/* <Pressable
-            onPress={() => navigation.goBack()}
-            w="full"  
-            h={98}
-            mb={0.5}
-            justifyContent="center"
-            alignItems="center"
-            bg="white" 
-            rounder="md"
-             >
-                  
-            <Text pt={2} fontWeight={400} fontSize={13} isTruncated>hi this is gencode</Text>
-      </Pressable> */}
+   
     <Footer/>
 
     </Box>

@@ -39,7 +39,7 @@ const Qrprint = () => {
 
                             <HStack justifyContent="space-evenly" alignItems="center" bg="white" space={6} >
                                 <Text w={"10%"}  pl={5} >
-                                    {item.id}
+                                    {item.id+1}
                                 </Text>
                                 <Divider orientation='vertical' />
                                 <Text w={"50%"}>

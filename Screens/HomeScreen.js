@@ -6,7 +6,9 @@ import Heading1 from '../Components/Heading1';
 
 import Heading2 from '../Components/Heading2';
 import Heading3 from '../Components/Heading3';
+import Heading4 from '../Components/Heading4';
 import Footer from '../Components/Footer';
+import Dispatchdata from './Dispatchdata';
 export default function HomeScreen({navigation}) {
   const abc=()=>{
     console.log("hi this is search button");
@@ -24,9 +26,7 @@ export default function HomeScreen({navigation}) {
             <Text color="white"fontSize={18} fontWeight={600} >
                 BLE Beacons
             </Text>
-            <Pressable onPress={abc}>
-        
-   
+            <Pressable onPress={abc}> 
             <Ionicons name="search" size={24} color="white" />
             </Pressable>
         </HStack>
@@ -35,14 +35,15 @@ export default function HomeScreen({navigation}) {
 
      
         <Image source={require('../assets/background.jpg')} alt='beacon' w="full" height={300} resizeMode='cover'/>
-   
  
       <Content navigation={navigation} />
 
    
    <Heading1/>
+   <Dispatchdata/>
    <Heading2/>
    <Heading3/>
+   {/* <Heading4/> */}
    <Footer/>
    </ScrollView>
     </Box>

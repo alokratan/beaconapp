@@ -4,11 +4,19 @@ import React,{useState} from 'react'
 
 const Camtest = () => {
     const [qrdata,setQrdata]=useState("");
-    const [generated,setGenerated]=useState(false);
+    const [generated,setGenerated]=useState(true);
 
-// const av='{"item1":"item_392","item2":"item_393","item3":"Assigned To Supp on 4/5/2001"}'
+ const av='{"item1":"item_37384","item2":"item_393324","item3":"krgkAssigned To Supp on 4/5/2001"}'
    
+const ab={}
 
+ab.name="alok";
+ab.age=25;
+
+console.log(ab)
+
+const an=JSON.stringify(ab);
+console.log(an)
 
 
 
@@ -57,7 +65,7 @@ const abcd=(item)=>{
     <Box bg="#0001" justifyContent="center" alignItems="center" shadow={5} w="auto" h="auto">
     <QRCode
     size={260}
-    value= {qrdata}
+    value= {av}
   />
     </Box>
   
