@@ -14,6 +14,7 @@ const IssCon = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [itemdata, setItemdata] = useState([]);
+  const [alldata, setAlldata] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorshow, setErrorshow] = useState(false);
@@ -42,6 +43,8 @@ const IssCon = ({ navigation }) => {
       return <Text>No access to camera</Text>;
     }
   }
+
+
   const apicall = async (data) => {
     try {
       const result = await axios.get(`https://ourphonemd.com/ords/consultit/QRCODE/ITEM/${data}`);
@@ -52,15 +55,76 @@ const IssCon = ({ navigation }) => {
         setIsLoading(false);
       }
       else {
+        
+        const data={
+          
+          qr_id:result.data.items[0].qr_id,
+          p_item:result.data.items[0].p_item,
+          p_item_code: result.data.items[0].p_item_code,
+          p_qr_location:result.data.items[0].p_qr_location
+        }
+        console.log("all data is",alldata.length)
+        
+        
+      for(let i=0;i<=alldata.length;i++){
+
+if(alldata.length==0){
+  setAlldata([...alldata,data]);
+ 
+  setIsLoading(false);
+}
+
+else if(result.data.items[0].qr_id==23){
+console.log("match");
+
+setIsLoading(false);
+}
+else{
+  setAlldata([...alldata,data]);
+  setIsLoading(false);
+}
+      }
+
+      
+      
+        // setAlldata([...alldata,data]);
+      // alldata.filter((e)=>{
+      //       if(e.qr_id==result.data.items[0].qr_id || !e.qr_id){
+      //         alert("hello")
+      //       }
+      //       else{
+      //         
+      //       }
+      //   })
+  
+
+
+        // alldata.filter((r)=>{
+        //   if(r.p_item_code==result.data.items[0].p_item_code){
+        //     alert(result.data.items[0].p_item_code,"this item is already scanned")
+      
+        //   }
+        //   else{
+          
+        //   }
+        // })
+        
+        // if(result.data.items[0].p_item_code==alldata.p_item_code){
+        //   alert(data.result.data.items[0].p_item_code,"this item is already scanned")
+        // }
+        // else{
+   
+        // }
+ 
+
         setScanned(true);
         console.log(result.data.items[0]);
 
         setItemdata(result.data.items[0]);
-
-
+       
         setIsLoading(false);
        
-       
+      
       }
 
     }
@@ -94,6 +158,8 @@ setCONTRACTOR_NAME('');
 setCONTRACTOR_DEPT_NAME('');
 setCONTRACTOR_CONTAINER_TYPE('');
 setCONTRACTOR_DESCRIPTION('');
+
+
 } catch (error) {
   console.error("heading4",error); // Handle the error
 }
@@ -130,8 +196,11 @@ alert('All fields are required...')
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={{ width: 260, height: 260 }}
         />
-        {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)}>
-          Tap to Scan Again
+     {scanned && <Button  _pressed={{
+                bg:"grey",
+                      }} bg="white" py={5} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
+       <Text fontWeight="500" fontSize={18}> Tap to Scan Again
+        </Text>
         </Button>
         }
       </Box>
@@ -184,19 +253,33 @@ Issue To Contractor
             </Heading>
             <VStack bg="white" shadow={1} py={3} px={2} space={3} divider={<Divider />} w="100%">
               <HStack justifyContent="space-between">
-                <Text fontWeight={600} >Sr. No</Text>
+                <Text textAlign="center" fontWeight={600} >Sr. No</Text>
                 <Divider orientation="vertical" />
-                <Text fontWeight={600}>Item_name</Text>
+                <Text  textAlign="center"   w="20%" fontWeight={600}>Item_name</Text>
                 <Divider orientation="vertical" />
-                <Text fontWeight={600}>Item_code </Text>
+                <Text textAlign="center"  w="26%" fontWeight={600}>Item_code </Text>
                 <Divider orientation="vertical" />
-                <Text fontWeight={600}>Item_Loc </Text>
+                <Text textAlign="center"  w="30%" fontWeight={600}>Item_Loc </Text>
                 {/* <Divider orientation="vertical" />
     <Text  fontWeight={600}>Issue</Text> */}
               </HStack>
-              <ScrollView w="100%" h={30} nestedScrollEnabled>
+              <ScrollView w="100%" h={100} nestedScrollEnabled>
            
-              {
+
+           {
+         
+            alldata.map((itemdata)=>(
+<HStack key={itemdata.qr_id} px={1} py={2} justifyContent="space-between">
+      <Text>{itemdata.qr_id}</Text>
+        <Text w="20%">{itemdata.p_item}</Text>
+        <Text w="20%">{itemdata.p_item_code} </Text>
+        <Text w="30%">{itemdata.p_qr_location} </Text>
+       
+      </HStack>
+
+            ))
+           }
+              {/* {
     scanned?
     // <HStack  px={1} py={2} justifyContent="space-between">
     // <Text>id</Text>
@@ -223,7 +306,7 @@ Issue To Contractor
       
       </HStack>
    
-  }
+  } */}
 
                   
 

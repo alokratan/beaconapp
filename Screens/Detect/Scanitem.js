@@ -240,10 +240,13 @@ const Scanitem = ({navigation}) => {
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={{width:260,height:260}}       
       />
-       {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
-      Tap to Scan Again
-      </Button>
-      }
+        {scanned && <Button  _pressed={{
+                bg:"grey",
+                      }} bg="white" py={5} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
+       <Text fontWeight="500" fontSize={18}> Tap to Scan Again
+        </Text>
+        </Button>
+        }
         </Box>
   
     )
@@ -262,17 +265,7 @@ const Scanitem = ({navigation}) => {
         </Box>
         </Modal>
         
-        <Modal isOpen={errorshow} onClose={()=>setErrorshow(false)} > 
-        <Alert   bg="white" status="error" >
-          <VStack my={6} mx={10} space={2} alignItems="center" >
-          <Alert.Icon size={6} />
-          <Text fontWeight="800" fontSize={20}>Invalid Data</Text>
-          
-          </VStack>
-
-        </Alert>
-        
-        </Modal>
+       
         <Modal isOpen={openqr} onClose={()=>setOpenqr(false)} >
         <Modalcamfun/>
         </Modal>
@@ -286,7 +279,7 @@ const Scanitem = ({navigation}) => {
         </Heading>
         <Divider/>
         <Text fontSize={17} ml={4}>
-          Are you want to delete this item?
+          Are you sure want to delete this item?
                   </Text>
                   <HStack  justifyContent="space-evenly" >
                   <Button

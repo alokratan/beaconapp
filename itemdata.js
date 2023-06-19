@@ -17,7 +17,7 @@ export default [
        
         id: 2,
        icon:"phonelink",
-       title:"Operator",
+       title:"Operation",
     press:"Operator"
     },
     {

@@ -129,10 +129,13 @@ else{
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={{width:260,height:260}}       
       />
-       {scanned && <Button py={2} px={5} position='absolute' top='40%' onPress={() => setScanned(false)}>
-      Tap to Scan Again
-      </Button>
-      }
+     {scanned && <Button  _pressed={{
+                bg:"grey",
+                      }} bg="white" py={5} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
+       <Text fontWeight="500" fontSize={18}> Tap to Scan Again
+        </Text>
+        </Button>
+        }
         </Box>
     )
   } 
@@ -215,7 +218,6 @@ onPress={()=>setOpenqr(true)}>
       </HStack>
     // ))
     :
-   
       <HStack  px={1} py={2} justifyContent="space-between">
       <Text>-</Text>
         <Text>-</Text>

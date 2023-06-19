@@ -5,101 +5,114 @@ import Footer from '../Components/Footer';
 import Header from './Header';
 import axios from 'axios';
 const Gencode = ({navigation}) => {
-  const [category,setCategory]=useState("");
-  const [item,setItem]=useState("");
-  const [supplier,setSupplier]=useState("");
-  const [location,setLocation]=useState("");
-  const [numqr,setNumqr]=useState("");
-  const [sizeqr,setSizeqr]=useState("");
-  const [itemcode,setItemcode]=useState("");
+  const [P_QR_CATEGORY,setP_QR_CATEGORY]=useState("");
+  const [P_ITEM,setP_ITEM]=useState("");
+  const [P_SUPPLIER,setP_SUPPLIER]=useState("");
+  const [P_QR_LOCATION,setP_QR_LOCATION]=useState("");
+  const [P_QR_QUANTITY,setP_QR_QUANTITY]=useState("");
+  const [P_QR_SIZE,setP_QR_SIZE]=useState("");
   const [qrdata,setQrdata]=useState("");
   const [generated,setGenerated]=useState(false);
 
-  useEffect(() => {
-   
-  }, [])
-
+ 
+ 
+ const postData = async () => {
+   try {
+     const response = await axios.post('https://ourphonemd.com/ords/consultit/QRCODE/QRCODEDATA',
+      { P_QR_CATEGORY,
+       P_ITEM,
+       P_SUPPLIER,
+       P_QR_LOCATION,
+       P_QR_QUANTITY,
+       P_QR_SIZE
+      });
+     console.log("heading4",response.data); // Handle the response data
+   } catch (error) {
+     console.error("heading4",error); // Handle the error
+   }
+ };
+  // useEffect(() => {
+    
+  // }, [])
   
-function generateRandomSixDigitNumber() {
-  const unique= Math.floor(100000 + Math.random() * 900000);
-  setItemcode(unique)
-  console.log(unique)
-}
-  
-  const postdata=async()=>{
+  // const postdata=async()=>{
 
-    try {
-      const result=await axios.post('https://ourphonemd.com/ords/consultit/QRCODE/QRCODEDATA',
-      // {
-      //   category,item,supplier,location,numqr,sizeqr,qrdata,generated
-        
-      // }
-      {
-        "P_QR_CATEGORY":"hello",
-        "P_ITEM":"4",
-        "P_SUPPLIER":"3",
-        "P_QR_LOCATION":"ghaziaad",
-        "P_QR_QUANTITY":"3",
-        "P_QR_SIZE":"24"
-      }
-      
-      )
-      console.log(result.data); // Handle the response data
-    } catch (error) {
-      console.error(error); // Handle the error
-    }
+  //   // let formData = new FormData()
+  //   // formData.append('P_QR_CATEGORY', P_QR_CATEGORY)
+  //   // formData.append('P_ITEM', P_ITEM)
+  //   // formData.append('P_SUPPLIER', P_SUPPLIER)
+  //   // formData.append('P_QR_LOCATION', P_QR_LOCATION)
+  //   // formData.append('P_QR_QUANTITY', P_QR_QUANTITY)
+  //   // formData.append('P_QR_SIZE', P_QR_SIZE)
+
+  //   try {
+  //     // let response = await axios.post('https://apex.oracle.com/pls/apex/rinku_oracle1/QRCODE/QR', formData, {
+  //     //           headers: {
+  //     //               'Content-Type': 'multipart/form-data',
+  //     //           },
+  //     //       });
+
+
+
+  //     const result=await axios.post('https://ourphonemd.com/ords/consultit/QRCODE/QRCODEDATA',
+    
+  //      { P_QR_CATEGORY:"abcd",
+  //       P_ITEM:"an",
+  //       P_SUPPLIER:"daf",
+  //       P_QR_LOCATION:"aef",
+  //       P_QR_QUANTITY:"aefrg",
+  //       P_QR_SIZE:"agarg"}
+
+  //     )
+
+  //   //   let response = await axios.post('https://ourphonemd.com/ords/consultit/QRCODE/QRCODEDATA',formData,{
+  //   //     headers: {
+  //   //         'Content-Type': 'multipart/form-data',
+  //   //     },
+  //   // });
+  //     console.log("maping",result.data); // Handle the response data
+  //   } catch (error) {
+  //     console.error(error); // Handle the error
+  //   }
    
-  }
+  // }
 
    const obj={
-    Category:category,
-    Item:item,
-    Item_Code:itemcode,
-    Supplier:supplier,
-    Location:location,
-    No_QR_Code:numqr,
-    QR_Size:sizeqr
+    Category:P_QR_CATEGORY,
+    Item:P_ITEM,
+    Supplier:P_SUPPLIER,
+    Location:P_QR_LOCATION,
+    No_QR_Code:P_QR_QUANTITY,
+    QR_Size:P_QR_SIZE
    };
    const av=JSON.stringify(obj);
-   
   const ongenfn=()=>{
-   
     setGenerated(true);
     setQrdata(av);
-    console.log(qrdata)
-    
   }
   const categoryfn=(e)=>{
-    console.log("hello",e)
-  
-   
-   
-setCategory(e)
+    console.log("hello",e);
+    setP_QR_CATEGORY(e);
   }
-
   const itemfn=(e)=>{
-    generateRandomSixDigitNumber();
     console.log("hello",e)
-    console.log(itemcode)
-    
-   
-setItem(e)
+    setP_ITEM(e)
   }
   const supplierfn=(e)=>{
     console.log("hello",e)
-    setSupplier(e)
+    setP_SUPPLIER(e)
   }
   const locationfn=(e)=>{
     console.log("hello",e)
-setLocation(e)
+    setP_QR_LOCATION(e)
   }
   const numqrfn=(e)=>{
     console.log("hello",e)
-    setNumqr(e)
+    setP_QR_QUANTITY(e)
   }
   const sizeqrfn=(e)=>{
     console.log("hello",e)
-    setSizeqr(e)
+    setP_QR_SIZE(e)
   }
 const printfnnavigate=()=>{
   console.log("navigate to another screen");
@@ -126,7 +139,7 @@ const printfnnavigate=()=>{
         _
          fontSize={16}
          
-          onPress={postdata} rounded={5} bg="#3C5AC8" w="40%" h={12} 
+          onPress={postData} rounded={5} bg="#3C5AC8" w="40%" h={12} 
                    _pressed={{
                   
             bg:"#0004",
@@ -144,10 +157,7 @@ const printfnnavigate=()=>{
         </Text>
        </Pressable>
         </VStack>
-        
-       
         </Box>
-         
       </Modal>
 
 <Header goback={()=>navigation.goBack()} title="Generate OR Code"/>
@@ -162,18 +172,21 @@ const printfnnavigate=()=>{
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={category}
+            selectedValue={P_QR_CATEGORY}
             onValueChange={categoryfn}
             >
-                <Select.Item label="Clothes" value="Clothes" />                
-                <Select.Item label="Mobiles & Tablet" value="Mobiles & Tablet" />                
-                <Select.Item label="Electronics" value="Electronics" />                
+                       
+                <Select.Item label="Mobiles" value="Mobiles" />                
+                <Select.Item label="Electronics" value="Electronics" /> 
+                <Select.Item label="Home Furnishing" value="Home Furnishing" />   
+                <Select.Item label="Clothes" value="Clothes" />    
+                {/* <Select.Item label="Clothes" value="Clothes" />                
                 <Select.Item label="Groceries" value="Groceries" />                
                 <Select.Item label="Food" value="Food" />                
                 <Select.Item label="Home Furnishing" value="Home Furnishing" />                
                 <Select.Item label="Jewelry" value="Jewelry" />                
                 <Select.Item label="Pet Care" value="Pet Care" />                
-                <Select.Item label="Health & Wellness" value="Health & Wellness" />                
+                <Select.Item label="Health & Wellness" value="Health & Wellness" />                 */}
             </Select>
 
 
@@ -185,13 +198,22 @@ const printfnnavigate=()=>{
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={item}
+            selectedValue={P_ITEM}
             onValueChange={itemfn}
             >
-                <Select.Item label="One Item" value="One Item" />                
-                <Select.Item label="Two Item" value="Two Item" />                
-                <Select.Item label="Three Item" value="Three Item" />                
-                <Select.Item label="Four Item" value="Four Item" />                
+                <Select.Item label="CHAIR" value="CHAIR" />                
+                <Select.Item label="AC" value="AC" />                
+                <Select.Item label="REMOTE" value="REMOTE" />                
+                <Select.Item label="LED" value="LED" />                
+                <Select.Item label="FAN" value="FAN" />                
+                <Select.Item label="BAG" value="BAG" />                
+                <Select.Item label="MOBILE" value="MOBILE" />                
+                <Select.Item label="DESKTOP" value="DESKTOP" />                
+                <Select.Item label="LAPTOP" value="LAPTOP" />                
+                <Select.Item label="KEYBOARD" value="KEYBOARD" />                
+                <Select.Item label="LIGHT"value="LIGHT" />                
+                             
+            
             </Select>
 
 {/* hello this is Suppiler/Vendor select option */}
@@ -202,7 +224,7 @@ const printfnnavigate=()=>{
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={supplier}
+            selectedValue={P_SUPPLIER}
             onValueChange={supplierfn}
             >
                 <Select.Item label="Manufacturers" value="Manufacturers" />                
@@ -221,16 +243,23 @@ const printfnnavigate=()=>{
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={location}
+            selectedValue={P_QR_LOCATION}
             onValueChange={locationfn}
             >
-                <Select.Item label="Ghaziabad" value="Ghaziabad" />                
+                {/* <Select.Item label="Ghaziabad" value="Ghaziabad" />                
                 <Select.Item label="Delhi" value="Delhi" />                
                 <Select.Item label="Greater Noida" value="Greater Noida" />                
                 <Select.Item label="Noida" value="Noida" />                
                 <Select.Item label="Gurugram" value="Gurugram" />                
                 <Select.Item label="Meerut" value="Meerut" />                
-                <Select.Item label="Lukhnow" value="Lukhnow" />                
+                <Select.Item label="Lukhnow" value="Lukhnow" /> 
+                            */}
+                <Select.Item label="RECEPTION" value="RECEPTION" />   
+                <Select.Item label="CONFERENCE" value="CONFERENCE" />   
+                <Select.Item label="MEETING_ROOM" value="MEETING_ROOM" />   
+                {/* <Select.Item label="LOC_JKL" value="LOC_JKL" />   
+                <Select.Item label="LOC_MNO" value="LOC_MNO" />   
+                <Select.Item label="LOC_PQR" value="LOC_PQR" />    */}
             </Select>
 
 {/* hello this is NumQRCode select option */}
@@ -241,7 +270,7 @@ const printfnnavigate=()=>{
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={numqr}
+            selectedValue={P_QR_QUANTITY}
             onValueChange={numqrfn}
             >
                 <Select.Item label="1" value="1" />                
@@ -266,7 +295,7 @@ placeholderTextColor={"black"} placeholder="QR Code Size"
               bg:"#E7F0FB",
               endIcon:<CheckIcon mt={0.5} size={5}/>,
             }}
-            selectedValue={sizeqr}
+            selectedValue={P_QR_SIZE}
             onValueChange={sizeqrfn}
             >
                 <Select.Item label="2x2 cm" value="2x2 cm" />                

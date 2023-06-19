@@ -1,13 +1,172 @@
-
-import { Box, HStack,Divider,Pressable,ScrollView, Heading, Text, VStack, Center, TextArea, Button } from 'native-base'
-import React from 'react'
+import { Box,Pressable,Alert,Modal,Spinner,HStack,Divider,ScrollView, Heading, Text, VStack, Center, TextArea, Button, Input } from 'native-base'
+import React,{useState,useCallback} from 'react'
 import Header from '../Header'
-import Footer from '../../Components/Footer'
+import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useFocusEffect } from '@react-navigation/native';
+import {ToastAndroid } from 'react-native';
+import axios from 'axios';
 import itemdetails from '../../Itemdetails'
+import Footer from '../../Components/Footer'
 import { MaterialIcons } from '@expo/vector-icons';
+
+
 const RetVender = ({navigation}) => {
+  const [openqr,setOpenqr]=useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [itemdata,setItemdata]=useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorshow, setErrorshow] = useState(false);
+  const [VENDOR_NAME, setVENDOR_NAME] = useState('');
+  const [VENDOR_LOCATION, setVENDOR_LOCATION] = useState('');
+  const [DESC_RETURN_VENDOR, setDESC_RETURN_VENDER] = useState('');   
+
+  useFocusEffect(
+    useCallback(
+      ()=>{
+       ( async () => {
+          const { status } = await BarCodeScanner.requestPermissionsAsync();
+          setHasPermission(status === 'granted');
+        
+        } )(); 
+      }
+    )
+  )
+
+
+  const onscanbutton=()=>{
+    if (hasPermission === null) {
+      return <Text>Requesting for camera permission</Text>;
+    }
+    if (hasPermission === false) {
+      return <Text>No access to camera</Text>;
+    }
+    }
+
+
+
+    const apicall= async (data)=>{
+      try{
+        const result=await axios.get(`https://ourphonemd.com/ords/consultit/QRCODE/ITEM/${data}`);  
+        console.log("res",result.data);
+        if(result.data.count==0){
+          setScanned(false);
+          ToastAndroid.show('Item Not Found', 1000)
+          setIsLoading(false);
+        }
+        else{
+              setScanned(true);
+          console.log(result.data.items[0]);
+    
+          setItemdata(result.data.items[0]);
+
+         setIsLoading(false);
+        }
+        
+      }
+      catch(err){
+          console.log(err)
+      }
+   
+  }
+
+  const onputdata=async()=>{
+    
+      setIsLoading(true);
+if(VENDOR_NAME.trim() || VENDOR_LOCATION.trim() || DESC_RETURN_VENDOR.trim()){
+
+  try {
+    const response = await axios.put(`https://ourphonemd.com/ords/consultit/QRCODE/UPDATE/DESC_RETURN_T_V/${itemdata.qr_id}`,
+     {   
+     
+      VENDOR_NAME,
+      VENDOR_LOCATION,
+      DESC_RETURN_VENDOR,
+     });
+    console.log("200 SUCCESS",response.data);
+    apicall(itemdata.p_item_code);
+    ToastAndroid.show('Issued Successfully...', 1000)
+
+  // Handle the response data
+    setIsLoading(false);  
+    setVENDOR_NAME('');
+    setVENDOR_LOCATION('');
+    setDESC_RETURN_VENDER('');
+  } catch (error) {
+    console.error("heading4",error); // Handle the error
+  }
+}
+else{
+  setIsLoading(false);
+  alert('All fields are required...')
+}
+     
+    }
+  // console.log("hello",itemdata)
+
+  
+ 
+  function Modalcamfun(){
+    onscanbutton();
+    const handleBarCodeScanned = async ({data }) => {  
+      setOpenqr(false);
+    
+      console.log(data)
+      if(data[0]!=="I"){
+        setScanned(false);
+        setErrorshow(true)
+           
+      }
+      else{
+      
+        setIsLoading(true);
+        ToastAndroid.show('Please Wait.', 1000);
+        setScanned(true);
+        apicall(data);
+      }}
+    return(
+      <Box bg="white" justifyContent="center" alignItems="center" h={300} w={300}>       
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={{width:260,height:260}}       
+      />
+     {scanned && <Button  _pressed={{
+                bg:"grey",
+                      }} bg="white" py={5} px={5} position='absolute' top='40%' onPress={() => setScanned(false)} >
+       <Text fontWeight="500" fontSize={18}> Tap to Scan Again
+        </Text>
+        </Button>
+        }
+        </Box>
+    )
+  } 
+
+  
+  setTimeout(() => {
+    setErrorshow(false)
+  }, 2000); 
   return (
     <Box flex={1}  justifyContent="space-between" bg="#E7F0FB">
+    
+    <Modal isOpen={openqr} onClose={()=>setOpenqr(false)} >
+        <Modalcamfun/>
+        </Modal>
+        <Modal isOpen={isLoading} > 
+        <Box w={12}h={12} rounded={50} justifyContent="center" bg="white" >
+        <Spinner size={30} color="black"/>
+        </Box>
+        </Modal>
+        <Modal isOpen={errorshow} onClose={()=>setErrorshow(false)} > 
+        <Alert   bg="white" status="error" >
+          <VStack my={6} mx={10} space={2} alignItems="center" >
+          <Alert.Icon size={6} />
+          <Text fontWeight="800" fontSize={20}>Invalid Data</Text>
+          
+          </VStack>
+
+        </Alert>
+        
+        </Modal>
     <Header goback={()=>navigation.goBack()} title="Return To Vender"/>
    <ScrollView   nestedScrollEnabled>
 
@@ -18,9 +177,16 @@ const RetVender = ({navigation}) => {
 Return to Vendor
 </Heading> */}
 <HStack justifyContent="space-between" w="full" rounded={5} px={5} bg="white" py={4}>
+{
+  scanned?
+  <Text fontSize={18}>
+Scan Again
+</Text>:
 <Text fontSize={18}>
-Scan QR Code
+Scan Item
 </Text>
+
+}
 <Pressable
 
 _pressed={
@@ -28,7 +194,7 @@ _pressed={
     bg:'grey'
   }
 }
-onPress={()=>alert("scan is not possible")}>
+onPress={()=>setOpenqr(true)}>
 <MaterialIcons  name="qr-code-scanner" size={24} color="black" />  
 </Pressable>
 </HStack>
@@ -53,21 +219,36 @@ onPress={()=>alert("scan is not possible")}>
     <Text  fontWeight={600}>Item_code </Text>
     <Divider orientation="vertical" />
     <Text  fontWeight={600}>Item_Loc </Text>
-    <Divider orientation="vertical" />
-    <Text  fontWeight={600}>Return</Text>
+    
   </HStack>
-  <ScrollView  w="100%" h={100} nestedScrollEnabled>
+  <ScrollView  w="100%" h={10} nestedScrollEnabled>
+    
   {
-    itemdetails.map((item)=>(
-      <HStack key={item.id} px={1} py={2} justifyContent="space-between">
-      <Text>{item.id+1}</Text>
-        <Text>{item.itemname}</Text>
-        <Text>{item.itemcode} </Text>
-        <Text>{item.itemloc} </Text>
-        <Text>-</Text>
-     
+    scanned?
+    // <HStack  px={1} py={2} justifyContent="space-between">
+    // <Text>id</Text>
+    //   <Text>item iengif</Text>
+    //   <Text>item codewgowee </Text>
+    //   <Text>locatiejwgojowjon </Text>
+    //   <Text>Pass</Text>
+    // </HStack>
+       <HStack key={itemdata.qr_id} px={1} py={2} justifyContent="space-between">
+      <Text>{itemdata.qr_id}</Text>
+        <Text>{itemdata.p_item}</Text>
+        <Text>{itemdata.p_item_code} </Text>
+        <Text>{itemdata.p_qr_location} </Text>
+       
       </HStack>
-    ))
+    // ))
+    :
+      <HStack  px={1} py={2} justifyContent="space-between">
+      <Text>-</Text>
+        <Text>-</Text>
+        <Text>-</Text>
+        <Text>-</Text>
+      
+      </HStack>
+   
   }
   </ScrollView>
 
@@ -76,12 +257,10 @@ onPress={()=>alert("scan is not possible")}>
 </VStack>
 <VStack space={5}>
 
-<Text fontSize={18}  w="full" rounded={5} pl={5} bg="white" py={4}  >
-  Vender Name
-</Text>
-<Text fontSize={18}  w="full" rounded={5} pl={5} bg="white" py={4}  >
-  Vender Location
-</Text>
+<Input value={VENDOR_NAME}  onChangeText={(e)=>setVENDOR_NAME(e)}  fontSize={18}  w="full" placeholder='Vender Name' rounded={5} pl={5} bg="white" py={4}  />
+<Input value={VENDOR_LOCATION}  onChangeText={(e)=>setVENDOR_LOCATION(e)}  fontSize={18}  w="full" placeholder=' Vender Location' rounded={5} pl={5} bg="white" py={4}  />
+
+
 
 </VStack>
 
@@ -91,10 +270,10 @@ onPress={()=>alert("scan is not possible")}>
 
 <Center>
         <Divider  w="90%" orientation='horizontal' />
-        <TextArea mt={5} h={170} fontSize={19} bg="white" placeholder='Add Description If Any'  w="90%" />
+        <TextArea value={DESC_RETURN_VENDOR} onChangeText={(e)=>setDESC_RETURN_VENDER(e)} mt={5} h={170} fontSize={19} bg="white" placeholder='Add Description If Any'  w="90%" />
         <Button
         my={7}
-          onPress={()=>console.log(false)} rounded={5} bg="#3C5AC8" w="40%" h={12} 
+          onPress={scanned? onputdata: console.log('nothing')} rounded={5} bg="#3C5AC8" w="40%" h={12} 
                    _pressed={{
             bg:"#0004",
           }} >

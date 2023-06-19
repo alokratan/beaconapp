@@ -40,7 +40,7 @@ export default function HomeScreen({navigation}) {
 
    
    <Heading1/>
-   <Dispatchdata/>
+   {/* <Dispatchdata/> */}
    <Heading2/>
    <Heading3/>
    {/* <Heading4/> */}
